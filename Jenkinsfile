@@ -1,35 +1,28 @@
-pipeline {
-    agent any
-    stages {
+node {
+    try {
         stage('Build') {
-            steps {
-                sh '''
-                echo "Building Java project..."
-                ls
-                cd "Password Protection"
-                mkdir -p build
-                javac -d build src/*.java
-                echo "Build successful"
-                '''
-            }
+            sh '''
+            echo "Building Java project..."
+            ls
+            cd "Password Protection"
+            mkdir -p build
+            javac -d build src/*.java
+            echo "Build successful"
+            '''
         }
         stage('Test') {
-            steps {
-                sh 'echo "Running tests..."'
-            }
+            sh 'echo "Running tests..."'
         }
         stage('Deploy') {
-            steps {
-                sh '''
-                cd "Password Protection"
-                jar cf FileEncrypter.jar -C build .
-                echo "Deployment successful"
-                '''
-            }
+            sh '''
+            cd "Password Protection"
+            jar cf FileEncrypter.jar -C build .
+            echo "Deployment successful"
+            '''
         }
-    }
-    post {
-        success { echo "Pipeline executed successfully!" }
-        failure { echo "Pipeline failed!" }
+        echo "Pipeline executed successfully!"
+    } catch (Exception e) {
+        echo "Pipeline failed!"
+        throw e
     }
 }
